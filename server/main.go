@@ -66,13 +66,11 @@ func broadSend(msg string, users Users, conn net.Conn) {
 	log.Printf("User \"%s\" send messege \"%s\" broadcast", users.mirror[conn],
 		msg)
 	for _, users_conn := range users.name {
-		if users.mirror[conn] != users.mirror[users_conn] {
-			_, err := fmt.Fprintln(users_conn, users.mirror[conn]+": "+msg)
-			if err != nil {
-				log.Printf("Error: Bad connection to user:%s\n",
-					users.mirror[users_conn])
-				continue
-			}
+		_, err := fmt.Fprintln(users_conn, users.mirror[conn]+": "+msg)
+		if err != nil {
+			log.Printf("Error: Bad connection to user:%s\n",
+				users.mirror[users_conn])
+			continue
 		}
 	}
 }

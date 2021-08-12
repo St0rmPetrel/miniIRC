@@ -4,24 +4,34 @@ import (
 	"log"
 
 	ui "github.com/gizak/termui/v3"
+	"github.com/gizak/termui/v3/widgets"
 )
+
+type look struct {
+	input_p  *widgets.Paragraph
+	output_p *widgets.Paragraph
+}
 
 func Userinterface(clientEvents, serverEvents chan string, quit chan int) {
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
-	input_p := inputWidgetInit()
+	l := widgetInit(60, 25)
 	printEvents := ui.PollEvents()
 	for {
 		select {
 		case e := <-printEvents:
-			//
-			handleClientEvent(input_p, e.ID, quit)
+			handleClientEvent(l, e.ID, clientEvents, quit)
 		case msg := <-serverEvents:
-			handleServerEvent(msg)
+			handleServerEvent(l, msg)
 		case <-quit:
 			return
 		}
 	}
+}
+
+func widgetInit(width, height int) *look {
+	return &look{inputWidgetInit(width, height),
+		outputWidgetInit(width, height)}
 }

@@ -12,15 +12,17 @@ var (
 	text string
 )
 
-func inputWidgetInit() *widgets.Paragraph {
+func inputWidgetInit(width, height int) *widgets.Paragraph {
 	p := widgets.NewParagraph()
 	p.Text = prettyPrint("")
-	p.SetRect(0, 0, 50, 3)
+	p.SetRect(0, 0, width, 3)
 	ui.Render(p)
 	return p
 }
 
-func handleClientEvent(input_p *widgets.Paragraph, e string, quit chan int) {
+func handleClientEvent(l *look, e string,
+	clientEvents chan string, quit chan int) {
+	input_p := l.input_p
 	switch {
 	case e == "<C-c>":
 		quit <- 1
@@ -38,6 +40,14 @@ func handleClientEvent(input_p *widgets.Paragraph, e string, quit chan int) {
 			break
 		}
 		text = trimLastChar(text)
+		input_p.Text = prettyPrint(text)
+		ui.Render(input_p)
+	case e == "<Enter>":
+		if len(text) == 0 {
+			break
+		}
+		clientEvents <- text
+		text = ""
 		input_p.Text = prettyPrint(text)
 		ui.Render(input_p)
 	}
