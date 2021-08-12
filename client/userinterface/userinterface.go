@@ -15,10 +15,10 @@ func Userinterface(clientEvents, serverEvents chan string, quit chan int) {
 	printEvents := ui.PollEvents()
 	for {
 		select {
-		case e <- printEvents:
+		case e := <-printEvents:
 			//
 			handleClientEvent(input_p, e.ID, quit)
-		case msg <- serverEvents:
+		case msg := <-serverEvents:
 			handleServerEvent(msg)
 		case <-quit:
 			return

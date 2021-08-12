@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/St0rmPetrel/client/userinterface"
+	"github.com/St0rmPetrel/miniIRC/client/userinterface"
 )
 
 func main() {

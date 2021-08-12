@@ -16,7 +16,7 @@ func inputWidgetInit() *widgets.Paragraph {
 	p := widgets.NewParagraph()
 	p.Text = prettyPrint("")
 	p.SetRect(0, 0, 50, 3)
-	ui.Render(p_my)
+	ui.Render(p)
 	return p
 }
 
@@ -32,14 +32,14 @@ func handleClientEvent(input_p *widgets.Paragraph, e string, quit chan int) {
 	case e == "<Space>":
 		text += " "
 		input_p.Text = prettyPrint(text)
-		ui.Render(p_my)
+		ui.Render(input_p)
 	case e == "<Backspace>":
 		if len(text) == 0 {
-			continue
+			break
 		}
 		text = trimLastChar(text)
 		input_p.Text = prettyPrint(text)
-		ui.Render(p_my)
+		ui.Render(input_p)
 	}
 }
 
