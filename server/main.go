@@ -44,10 +44,12 @@ func session(conn net.Conn, users Users) {
 			break
 		}
 		dest, msg := parseRequese(req)
-		if msg == "" {
+		if msg == "" || dest == "" {
 			continue
 		} else if dest == "all" {
 			broadSend(msg, users, conn)
+		} else {
+			privateSend(msg, dest, users, conn)
 		}
 	}
 }
@@ -73,4 +75,26 @@ func broadSend(msg string, users Users, conn net.Conn) {
 			continue
 		}
 	}
+}
+
+func privateSend(msg string, dest string, users Users, conn net.Conn) {
+	log.Printf("User \"%s\" send private messege \"%s\" to user \"%s\"",
+		users.mirror[conn], msg, dest)
+	log.Printf("Try to find user \"%s\"...", dest)
+	if dest_conn, ok := users.name[dest]; ok {
+		log.Printf("User \"%s\" is found", dest)
+		if _, err := fmt.Fprintln(conn, users.mirror[conn]+
+			"->"+dest+": "+msg); err != nil {
+			log.Printf("Error: Bad connection to user:%s\n",
+				users.mirror[conn])
+			return
+		}
+		if _, err := fmt.Fprintln(dest_conn, users.mirror[conn]+
+			"->"+dest+": "+msg); err != nil {
+			log.Printf("Error: Bad connection to user:%s\n", dest)
+			return
+		}
+		return
+	}
+	log.Printf("Error: User \"%s\" not found", dest)
 }
