@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+
+	"github.com/St0rmPetrel/client/userinterface"
 )
 
 func main() {
@@ -29,13 +31,13 @@ func session(conn net.Conn) {
 	clientEvents := make(chan string, 1)
 	serverEvents := make(chan string, 10)
 	quit := make(chan int, 1)
-	go receive_msgs(conn, serverEvents, quit)
-	go send_msgs(conn, clientEvents, quit)
-	userinterface.userinterface(clientEvents, serverEvents, quit)
+	go receive_msg(conn, serverEvents, quit)
+	go send_msg(conn, clientEvents, quit)
+	userinterface.Userinterface(clientEvents, serverEvents, quit)
 	println("Connection with server is lost")
 }
 
-func receive_msgs(conn net.Conn, serverEvents chan string, quit chan int) {
+func receive_msg(conn net.Conn, serverEvents chan string, quit chan int) {
 	for {
 		msg, err := bufio.NewReader(conn).ReadString('\n')
 		if err != nil {
@@ -47,10 +49,8 @@ func receive_msgs(conn net.Conn, serverEvents chan string, quit chan int) {
 }
 
 func send_msg(conn net.Conn, clientEvents chan string, quit chan int) {
-	var msg string
-
 	for {
-		msg <- clientEvents
+		msg := <-clientEvents
 		if _, err := fmt.Fprintln(conn, msg); err != nil {
 			quit <- 1
 			return

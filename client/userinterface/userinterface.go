@@ -4,10 +4,9 @@ import (
 	"log"
 
 	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
 )
 
-func userinterface(clientEvents, serverEvents chan string, quit chan int) {
+func Userinterface(clientEvents, serverEvents chan string, quit chan int) {
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
